@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9B5BE2401ABE0D6000FCE3B3 /* paper-example.png in Resources */ = {isa = PBXBuildFile; fileRef = 9B5BE23F1ABE0D6000FCE3B3 /* paper-example.png */; };
 		9BE04AEF1ABD81A500AB26E0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE04AEE1ABD81A500AB26E0 /* AppDelegate.swift */; };
 		9BE04AF11ABD81A500AB26E0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE04AF01ABD81A500AB26E0 /* ViewController.swift */; };
 		9BE04AF41ABD81A500AB26E0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9BE04AF21ABD81A500AB26E0 /* Main.storyboard */; };
@@ -32,7 +31,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		9B5BE23F1ABE0D6000FCE3B3 /* paper-example.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "paper-example.png"; sourceTree = "<group>"; };
 		9BE04AE91ABD81A500AB26E0 /* ColourInvariance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ColourInvariance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9BE04AED1ABD81A500AB26E0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9BE04AEE1ABD81A500AB26E0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -99,7 +97,6 @@
 				9BE04AF71ABD81A500AB26E0 /* LaunchScreen.xib */,
 				9BE04B0E1ABD84AE00AB26E0 /* img_3245.jpg */,
 				9BE04B101ABD93B500AB26E0 /* brick-wall.jpg */,
-				9B5BE23F1ABE0D6000FCE3B3 /* paper-example.png */,
 				9BE04AEC1ABD81A500AB26E0 /* Supporting Files */,
 			);
 			path = ColourInvariance;
@@ -212,7 +209,6 @@
 			files = (
 				9BE04AF41ABD81A500AB26E0 /* Main.storyboard in Resources */,
 				9BE04B0F1ABD84AE00AB26E0 /* img_3245.jpg in Resources */,
-				9B5BE2401ABE0D6000FCE3B3 /* paper-example.png in Resources */,
 				9BE04B111ABD93B500AB26E0 /* brick-wall.jpg in Resources */,
 				9BE04AF91ABD81A500AB26E0 /* LaunchScreen.xib in Resources */,
 				9BE04AF61ABD81A500AB26E0 /* Images.xcassets in Resources */,
