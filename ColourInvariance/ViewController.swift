@@ -13,12 +13,11 @@
 
 
 import UIKit
+import CoreMedia
 
 class ViewController: UIViewController {
 
-    var imageView: UIImageView!
     var slider: UISlider!
-    var image: UIImage!
     var invariantSwitch: UISwitch!
     var camera: Camera!
     var metalController: MetalController!
@@ -35,80 +34,41 @@ class ViewController: UIViewController {
         self.invariantSwitch = UISwitch(frame: CGRectMake(0, self.view.bounds.size.height - 40, 50, 40))
         self.invariantSwitch.addTarget(self, action: "invariantSwitchDidChangeValue:", forControlEvents: .ValueChanged)
         self.invariantSwitch.on = true
+        
+        self.camera = Camera()
+        self.camera.delegate = self
+        
+        self.metalController = MetalController()
+
+        self.metalController.metalLayer.frame = self.view.bounds
+        self.metalController.invarianceEnabled = self.invariantSwitch.on
+        self.metalController.alphaFactor = Float(slider.value)
+        self.metalController.metalLayer.backgroundColor = UIColor.yellowColor().CGColor
+        self.metalController.metalLayer.contentsGravity = kCAGravityResizeAspect
+        self.view.layer.addSublayer(self.metalController.metalLayer)
+
+        self.view.addSubview(self.slider)
         self.view.addSubview(self.invariantSwitch)
         
-        let image = UIImage(named: "brick-wall.jpg")!
-        self.image = image
-        
-        self.imageView = UIImageView()
-        self.imageView.frame = self.view.bounds
-        self.imageView.contentMode = .ScaleAspectFit
-        self.imageView.layer.setAffineTransform(CGAffineTransformMakeRotation(CGFloat(M_PI/2.0)))
-        self.view.addSubview(self.imageView)
+        self.camera.start()
 
-        self.metalController = MetalController()
-        self.imageView.image = self.metalController.invariantImageFromImage(image)
-
-//        self.camera = Camera()
-//        self.camera.delegate = self
-        
-        self.view.addSubview(self.slider)
-
-//        self.updateImage()
     }
     
-    func updateImage()
-    {
-        
-        if !self.invariantSwitch.on
-        {
-            self.imageView.image = self.image
-        }
-        else
-        {
-            let imageRef = self.image.CGImage!
-
-            let width = CGImageGetWidth(imageRef)
-            let height = CGImageGetHeight(imageRef)
-            let colorSpace = CGColorSpaceCreateDeviceRGB()
-            let rawData = UnsafeMutablePointer<UInt8>.alloc(height * width * 4)
-            
-            let bytesPerPixel = 4
-            let bytesPerRow = bytesPerPixel * width
-            let bitsPerComponent = 8
-            let context = CGBitmapContextCreate(rawData, width, height, bitsPerComponent, bytesPerRow, colorSpace,
-                CGBitmapInfo(CGBitmapInfo.ByteOrder32Big.rawValue | CGImageAlphaInfo.PremultipliedLast.rawValue))
-            
-            CGContextDrawImage(context, CGRectMake(0, 0, CGFloat(width), CGFloat(height)), imageRef)
-            
-            let algoAlpha = Double(slider.value)
-            
-            makeImageDataColourInvariant(rawData, width, height, algoAlpha, .RGB)
-            
-            let image = CGBitmapContextCreateImage(context)
-            self.imageView.image = UIImage(CGImage: image)
-        }
-    }
-
     func sliderDidChangeValue(slider: UISlider)
     {
-        self.updateImage()
-        self.camera.alphaParam = Double(slider.value)
+        self.metalController.alphaFactor = Float(slider.value)
     }
     
     func invariantSwitchDidChangeValue(switchControl: UISwitch)
     {
-        self.updateImage()
+        self.metalController.invarianceEnabled = switchControl.on
     }
 }
 
-
 extension ViewController : CameraDelegate
 {
-    func cameraDidGenerateNewImage(image: CGImageRef)
+    func cameraDidGenerateSampleBuffer(sampleBuffer: CMSampleBuffer)
     {
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            self.imageView.layer.contents = image
-        })
+        self.metalController.pendingSampleBuffer = sampleBuffer
     }
 }

@@ -13,7 +13,7 @@ import Accelerate
 
 protocol CameraDelegate : class
 {
-    func cameraDidGenerateNewImage(image: CGImageRef)
+    func cameraDidGenerateSampleBuffer(sampleBuffer: CMSampleBuffer)
 }
 
 class Camera : NSObject
@@ -22,12 +22,12 @@ class Camera : NSObject
     
     let session: AVCaptureSession
     
-    var alphaParam = 0.45
     
     override init()
     {
         self.session = AVCaptureSession()
         self.session.sessionPreset = AVCaptureSessionPresetHigh
+        
         
         super.init()
         
@@ -42,11 +42,17 @@ class Camera : NSObject
         let queue = dispatch_queue_create("MyQueue", nil);
         output.setSampleBufferDelegate(self, queue: queue)
         self.session.addOutput(output)
-        
-        self.session.startRunning()
+
+        let connection = output.connectionWithMediaType(AVMediaTypeVideo)
+        connection.videoOrientation = .Portrait
         
     }
 
+    func start()
+    {
+        self.session.startRunning()
+    }
+    
 }
 
 
@@ -55,35 +61,7 @@ extension Camera : AVCaptureVideoDataOutputSampleBufferDelegate
    
     func captureOutput(captureOutput: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!)
     {
-        
-        let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
-
-        CVPixelBufferLockBaseAddress(imageBuffer, 0);
-        
-        let bytesPerRow = CVPixelBufferGetBytesPerRow(imageBuffer);
-        let width = CVPixelBufferGetWidth(imageBuffer)
-        let height = CVPixelBufferGetHeight(imageBuffer)
-
-        // Get the number of bytes per row for the pixel buffer
-        let baseAddress = CVPixelBufferGetBaseAddress(imageBuffer)
-        
-        // convert UnsafeMutablePointer to UInt8
-        let baseAddressPointer = COpaquePointer(baseAddress)
-        let imageAddressBuffer = UnsafeMutablePointer<UInt8>(baseAddressPointer)
-
-        makeImageDataColourInvariant(imageAddressBuffer, width, height, self.alphaParam, .BGR)
-
-        // Create a bitmap graphics context with the sample buffer data
-        let colorSpace = CGColorSpaceCreateDeviceRGB();
-        let bitmapInfo = CGBitmapInfo(CGBitmapInfo.ByteOrder32Little.rawValue | CGImageAlphaInfo.PremultipliedFirst.rawValue)
-        let context = CGBitmapContextCreate(baseAddress, width, height, 8, bytesPerRow, colorSpace, bitmapInfo) // bgra
-        // Create a Quartz image from the pixel data in the bitmap graphics context
-        let quartzImage = CGBitmapContextCreateImage(context)!;
-        
-        CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
-        
-        self.delegate?.cameraDidGenerateNewImage(quartzImage)
-        
+        self.delegate?.cameraDidGenerateSampleBuffer(sampleBuffer)
     }
    
 }
