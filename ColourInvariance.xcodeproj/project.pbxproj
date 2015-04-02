@@ -7,13 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9BACD4691ACDCBA40045607B /* MetalController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BACD4681ACDCBA40045607B /* MetalController.swift */; };
+		9BACD46B1ACDCCF70045607B /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9BACD46A1ACDCCF70045607B /* Shaders.metal */; };
 		9BE04AEF1ABD81A500AB26E0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE04AEE1ABD81A500AB26E0 /* AppDelegate.swift */; };
 		9BE04AF11ABD81A500AB26E0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE04AF01ABD81A500AB26E0 /* ViewController.swift */; };
 		9BE04AF41ABD81A500AB26E0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9BE04AF21ABD81A500AB26E0 /* Main.storyboard */; };
 		9BE04AF61ABD81A500AB26E0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9BE04AF51ABD81A500AB26E0 /* Images.xcassets */; };
 		9BE04AF91ABD81A500AB26E0 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9BE04AF71ABD81A500AB26E0 /* LaunchScreen.xib */; };
 		9BE04B051ABD81A500AB26E0 /* ColourInvarianceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE04B041ABD81A500AB26E0 /* ColourInvarianceTests.swift */; };
-		9BE04B0F1ABD84AE00AB26E0 /* img_3245.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9BE04B0E1ABD84AE00AB26E0 /* img_3245.jpg */; };
 		9BE04B111ABD93B500AB26E0 /* brick-wall.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9BE04B101ABD93B500AB26E0 /* brick-wall.jpg */; };
 		9BE04B131ABD960300AB26E0 /* ImageProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE04B121ABD960300AB26E0 /* ImageProcessing.swift */; };
 		9BE04B1A1ABDC6BE00AB26E0 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE04B191ABDC6BE00AB26E0 /* Camera.swift */; };
@@ -31,6 +32,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9BACD4681ACDCBA40045607B /* MetalController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetalController.swift; sourceTree = "<group>"; };
+		9BACD46A1ACDCCF70045607B /* Shaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		9BE04AE91ABD81A500AB26E0 /* ColourInvariance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ColourInvariance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9BE04AED1ABD81A500AB26E0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9BE04AEE1ABD81A500AB26E0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -41,7 +44,6 @@
 		9BE04AFE1ABD81A500AB26E0 /* ColourInvarianceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ColourInvarianceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9BE04B031ABD81A500AB26E0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9BE04B041ABD81A500AB26E0 /* ColourInvarianceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColourInvarianceTests.swift; sourceTree = "<group>"; };
-		9BE04B0E1ABD84AE00AB26E0 /* img_3245.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = img_3245.jpg; path = ../../../../Downloads/img_3245.jpg; sourceTree = "<group>"; };
 		9BE04B101ABD93B500AB26E0 /* brick-wall.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "brick-wall.jpg"; sourceTree = "<group>"; };
 		9BE04B121ABD960300AB26E0 /* ImageProcessing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageProcessing.swift; sourceTree = "<group>"; };
 		9BE04B191ABDC6BE00AB26E0 /* Camera.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
@@ -92,10 +94,11 @@
 				9BE04B1B1ABDD32300AB26E0 /* VideoView.swift */,
 				9BE04AEE1ABD81A500AB26E0 /* AppDelegate.swift */,
 				9BE04AF01ABD81A500AB26E0 /* ViewController.swift */,
+				9BACD4681ACDCBA40045607B /* MetalController.swift */,
+				9BACD46A1ACDCCF70045607B /* Shaders.metal */,
 				9BE04AF21ABD81A500AB26E0 /* Main.storyboard */,
 				9BE04AF51ABD81A500AB26E0 /* Images.xcassets */,
 				9BE04AF71ABD81A500AB26E0 /* LaunchScreen.xib */,
-				9BE04B0E1ABD84AE00AB26E0 /* img_3245.jpg */,
 				9BE04B101ABD93B500AB26E0 /* brick-wall.jpg */,
 				9BE04AEC1ABD81A500AB26E0 /* Supporting Files */,
 			);
@@ -208,7 +211,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9BE04AF41ABD81A500AB26E0 /* Main.storyboard in Resources */,
-				9BE04B0F1ABD84AE00AB26E0 /* img_3245.jpg in Resources */,
 				9BE04B111ABD93B500AB26E0 /* brick-wall.jpg in Resources */,
 				9BE04AF91ABD81A500AB26E0 /* LaunchScreen.xib in Resources */,
 				9BE04AF61ABD81A500AB26E0 /* Images.xcassets in Resources */,
@@ -230,10 +232,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				9BE04B1A1ABDC6BE00AB26E0 /* Camera.swift in Sources */,
+				9BACD46B1ACDCCF70045607B /* Shaders.metal in Sources */,
 				9BE04B1C1ABDD32300AB26E0 /* VideoView.swift in Sources */,
 				9BE04AF11ABD81A500AB26E0 /* ViewController.swift in Sources */,
 				9BE04AEF1ABD81A500AB26E0 /* AppDelegate.swift in Sources */,
 				9BE04B131ABD960300AB26E0 /* ImageProcessing.swift in Sources */,
+				9BACD4691ACDCBA40045607B /* MetalController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -367,7 +371,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				SWIFT_OPTIMIZATION_LEVEL = "-Ounchecked";
 			};
 			name = Debug;
 		};
@@ -380,7 +383,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				SWIFT_OPTIMIZATION_LEVEL = "-Ounchecked";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 			};
 			name = Release;
 		};

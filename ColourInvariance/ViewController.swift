@@ -21,11 +21,12 @@ class ViewController: UIViewController {
     var image: UIImage!
     var invariantSwitch: UISwitch!
     var camera: Camera!
+    var metalController: MetalController!
     
     override func viewDidLoad()
     {
         super.viewDidLoad()
-    
+        
         self.slider = UISlider(frame: CGRect(x: 0, y: 0, width: self.view.bounds.size.width, height: 40))
         self.slider.addTarget(self, action: "sliderDidChangeValue:", forControlEvents: .ValueChanged)
         self.slider.value = 0.45
@@ -33,10 +34,11 @@ class ViewController: UIViewController {
         
         self.invariantSwitch = UISwitch(frame: CGRectMake(0, self.view.bounds.size.height - 40, 50, 40))
         self.invariantSwitch.addTarget(self, action: "invariantSwitchDidChangeValue:", forControlEvents: .ValueChanged)
-        self.invariantSwitch.on = false
+        self.invariantSwitch.on = true
         self.view.addSubview(self.invariantSwitch)
         
-        self.image = UIImage(named: "paper-example.png")!
+        let image = UIImage(named: "brick-wall.jpg")!
+        self.image = image
         
         self.imageView = UIImageView()
         self.imageView.frame = self.view.bounds
@@ -44,12 +46,15 @@ class ViewController: UIViewController {
         self.imageView.layer.setAffineTransform(CGAffineTransformMakeRotation(CGFloat(M_PI/2.0)))
         self.view.addSubview(self.imageView)
 
-        self.camera = Camera()
-        self.camera.delegate = self
+        self.metalController = MetalController()
+        self.imageView.image = self.metalController.invariantImageFromImage(image)
+
+//        self.camera = Camera()
+//        self.camera.delegate = self
         
         self.view.addSubview(self.slider)
 
-        self.updateImage()
+//        self.updateImage()
     }
     
     func updateImage()
