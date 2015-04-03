@@ -14,8 +14,6 @@ class MetalController {
     
     let metalLayer: CAMetalLayer
     
-    let textureUpdateQueue = dispatch_queue_create("com.mycompany.colourinvariance.textureupdate", DISPATCH_QUEUE_SERIAL)
-
     var alphaFactor: Float = 0.45
     var invarianceEnabled: Bool = true
     
@@ -24,7 +22,9 @@ class MetalController {
         case SampleBuffer(CMSampleBufferRef)
         case Image(UIImage)
     }
-    
+
+    private let textureUpdateQueue = dispatch_queue_create("com.mycompany.colourinvariance.textureupdate", DISPATCH_QUEUE_SERIAL)
+
     private let device: MTLDevice
     private let commandQueue: MTLCommandQueue
     
