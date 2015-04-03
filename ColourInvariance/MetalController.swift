@@ -3,7 +3,7 @@
 //  ColourInvariance
 //
 //  Created by Richard Zito on 02/04/2015.
-//  Copyright (c) 2015 Touchpress. All rights reserved.
+//  Copyright (c) 2015 Richard Zito. All rights reserved.
 //
 
 import UIKit
@@ -13,28 +13,30 @@ import CoreMedia
 class MetalController {
     
     let metalLayer: CAMetalLayer
-    let device: MTLDevice
-    let commandQueue: MTLCommandQueue
     
-    let colourInvariantPipelineState: MTLComputePipelineState
-    let colourPipelineState: MTLComputePipelineState
+    let textureUpdateQueue = dispatch_queue_create("com.mycompany.colourinvariance.textureupdate", DISPATCH_QUEUE_SERIAL)
 
     var alphaFactor: Float = 0.45
     var invarianceEnabled: Bool = true
-
-    var textureCache: Unmanaged<CVMetalTextureCacheRef>?
     
-    var pendingSampleBuffer: CMSampleBufferRef?
+    enum Texture
     {
-        didSet
-        {
-            self.createTexturesFromPendingSampleBuffer()
-        }
+        case SampleBuffer(CMSampleBufferRef)
+        case Image(UIImage)
     }
     
-    var inTexture: MTLTexture?
+    private let device: MTLDevice
+    private let commandQueue: MTLCommandQueue
     
-    struct AlphaFactorUniform
+    private let colourInvariantPipelineState: MTLComputePipelineState
+    private let colourPipelineState: MTLComputePipelineState
+
+    private var textureCache: Unmanaged<CVMetalTextureCacheRef>?
+    
+    private var texture: MTLTexture?
+    
+    // Matches struct in shader
+    private struct AlphaFactorUniform
     {
         var alphaFactor: Float
     }
@@ -62,36 +64,113 @@ class MetalController {
 
     }
     
-    func createTexturesFromPendingSampleBuffer()
+    deinit
     {
-        if let sampleBuffer = self.pendingSampleBuffer
+        self.textureCache?.release()
+    }
+    
+    func setTextureSource(textureSource: Texture?, completion: (() -> Void)?)
+    {
+        if let textureSource = textureSource
         {
-            let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-            
-            let pixelFormat = MTLPixelFormat.BGRA8Unorm;
-
-            var texture: Unmanaged<CVMetalTextureRef>?
-
-            let width = CVPixelBufferGetWidth(pixelBuffer);
-            let height = CVPixelBufferGetHeight(pixelBuffer);
-            
-            CVMetalTextureCacheCreateTextureFromImage(nil, self.textureCache?.takeUnretainedValue(), pixelBuffer, nil, pixelFormat, width, height, 0, &texture);
-            let textureRGB = CVMetalTextureGetTexture(texture?.takeRetainedValue());
-            
-            dispatch_sync(dispatch_get_main_queue()) {
-                self.inTexture = textureRGB
-                self.render()
+            dispatch_async(self.textureUpdateQueue) {
+                
+                switch textureSource
+                {
+                case .SampleBuffer(let sampleBuffer):
+                    self.setSourceTextureFromSampleBuffer(sampleBuffer, completion: completion)
+                case .Image(let image):
+                    self.setSourceTextureFromImage(image, completion: completion)
+                }
+                
+            }
+        }
+        else
+        {
+            dispatch_async(self.textureUpdateQueue) {
+                
+                UIGraphicsBeginImageContext(CGSizeMake(16, 16))
+                let context = UIGraphicsGetCurrentContext()
+                CGContextClearRect(context, CGRectMake(0, 0, 16, 16))
+                let image = UIGraphicsGetImageFromCurrentImageContext()
+                UIGraphicsEndImageContext()
+                
+                self.setSourceTextureFromImage(image, completion: completion)
+                
             }
 
-            CVMetalTextureCacheFlush(self.textureCache?.takeUnretainedValue(), CVOptionFlags(0))
-            
+        }
+    }
+    
+    private func setSourceTextureFromSampleBuffer(sampleBuffer: CMSampleBufferRef, completion: (() -> Void)?)
+    {
+        assert(!NSThread.isMainThread(), "Texture update not to be called on main thread")
+        
+        let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+        
+        let pixelFormat = MTLPixelFormat.BGRA8Unorm;
+        
+        var texture: Unmanaged<CVMetalTextureRef>?
+        
+        let width = CVPixelBufferGetWidth(pixelBuffer);
+        let height = CVPixelBufferGetHeight(pixelBuffer);
+        
+        CVMetalTextureCacheCreateTextureFromImage(nil, self.textureCache?.takeUnretainedValue(), pixelBuffer, nil, pixelFormat, width, height, 0, &texture);
+        let textureRGB = CVMetalTextureGetTexture(texture?.takeRetainedValue());
+        
+        dispatch_sync(dispatch_get_main_queue()) {
+            self.texture = textureRGB
+
+            self.render()
+            completion?()
+        }
+        
+        CVMetalTextureCacheFlush(self.textureCache?.takeUnretainedValue(), CVOptionFlags(0))
+    
+    }
+    
+    private func setSourceTextureFromImage(image: UIImage, completion: (() -> Void)?)
+    {
+        
+        assert(!NSThread.isMainThread(), "Texture update not to be called on main thread")
+
+        // get image data
+        let imageRef = image.CGImage
+        let imageWidth = CGImageGetWidth(imageRef)
+        let imageHeight = CGImageGetHeight(imageRef)
+        let bitsPerComponent = CGImageGetBitsPerComponent(imageRef)
+        let bytesPerRow = CGImageGetBytesPerRow(imageRef)
+        let colorSpace = CGImageGetColorSpace(imageRef)
+        
+        var rawData = [UInt8](count: Int(bytesPerRow * imageHeight), repeatedValue: 0)
+        
+        let bitmapInfo = CGBitmapInfo(CGBitmapInfo.ByteOrder32Big.rawValue | CGImageAlphaInfo.PremultipliedLast.rawValue)
+        
+        let context = CGBitmapContextCreate(&rawData, imageWidth, imageHeight, bitsPerComponent, bytesPerRow, colorSpace, bitmapInfo)
+        
+        CGContextDrawImage(context, CGRectMake(0, 0, CGFloat(imageWidth), CGFloat(imageHeight)), imageRef)
+        
+        // create texture from image data
+        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(MTLPixelFormat.RGBA8Unorm, width: Int(imageWidth), height: Int(imageHeight), mipmapped: false)
+        
+        let texture = self.device.newTextureWithDescriptor(textureDescriptor)
+        
+        let region = MTLRegionMake2D(0, 0, Int(imageWidth), Int(imageHeight))
+        texture.replaceRegion(region, mipmapLevel: 0, withBytes: &rawData, bytesPerRow: Int(bytesPerRow))
+        
+        dispatch_sync(dispatch_get_main_queue()) {
+            self.texture = texture
+            self.render()
+            completion?()
         }
         
     }
     
-    func render()
+    private func render()
     {
-        if let inTexture = self.inTexture
+        assert(NSThread.isMainThread(), "Render expected to be called on main thread")
+        
+        if let inTexture = self.texture
         {
             // set up command buffer
             let commandBuffer = self.commandQueue.commandBuffer()
@@ -119,43 +198,10 @@ class MetalController {
             commandEncoder.dispatchThreadgroups(threadGroups, threadsPerThreadgroup: threadGroupCount)
             commandEncoder.endEncoding()
             commandBuffer.commit()
-            //        commandBuffer.waitUntilCompleted()
+
             drawable.present()
             
         }
-    }
-    
-    func setTextureFromImage(image: UIImage)
-    {
-        // get image data
-        let imageRef = image.CGImage
-        let imageWidth = CGImageGetWidth(imageRef)
-        let imageHeight = CGImageGetHeight(imageRef)
-
-        let bitsPerComponent = 8
-        let bytesPerPixel = 4
-        let bitsPerPixel = bytesPerPixel * bitsPerComponent
-        let bytesPerRow = bytesPerPixel * imageWidth
-        let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
-        
-        var rawData = [UInt8](count: Int(imageWidth * imageHeight * 4), repeatedValue: 0)
-        
-        let bitmapInfo = CGBitmapInfo(CGBitmapInfo.ByteOrder32Big.rawValue | CGImageAlphaInfo.PremultipliedLast.rawValue)
-        
-        let context = CGBitmapContextCreate(&rawData, imageWidth, imageHeight, bitsPerComponent, bytesPerRow, rgbColorSpace, bitmapInfo)
-        
-        CGContextDrawImage(context, CGRectMake(0, 0, CGFloat(imageWidth), CGFloat(imageHeight)), imageRef)
-        
-        // create texture from image data
-        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(MTLPixelFormat.RGBA8Unorm, width: Int(imageWidth), height: Int(imageHeight), mipmapped: true)
-        
-        let texture = self.device.newTextureWithDescriptor(textureDescriptor)
-        
-        let region = MTLRegionMake2D(0, 0, Int(imageWidth), Int(imageHeight))
-        texture.replaceRegion(region, mipmapLevel: 0, withBytes: &rawData, bytesPerRow: Int(bytesPerRow))
-
-        self.inTexture = texture
-        
     }
     
 }

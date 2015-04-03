@@ -3,7 +3,7 @@
 //  ColourInvariance
 //
 //  Created by Richard Zito on 21/03/2015.
-//  Copyright (c) 2015 Touchpress. All rights reserved.
+//  Copyright (c) 2015 Richard Zito. All rights reserved.
 //
 
 import Foundation
@@ -20,14 +20,12 @@ class Camera : NSObject
 {
     var delegate: CameraDelegate?
     
-    let session: AVCaptureSession
-    
+    private let session: AVCaptureSession
     
     override init()
     {
         self.session = AVCaptureSession()
         self.session.sessionPreset = AVCaptureSessionPresetHigh
-        
         
         super.init()
         
@@ -39,7 +37,7 @@ class Camera : NSObject
         let output = AVCaptureVideoDataOutput()
         output.videoSettings = [ kCVPixelBufferPixelFormatTypeKey : kCVPixelFormatType_32BGRA ]
         output.alwaysDiscardsLateVideoFrames = true
-        let queue = dispatch_queue_create("MyQueue", nil);
+        let queue = dispatch_queue_create("com.mycompany.colourinvariance.videocaptureoutput", nil);
         output.setSampleBufferDelegate(self, queue: queue)
         self.session.addOutput(output)
 
@@ -53,8 +51,12 @@ class Camera : NSObject
         self.session.startRunning()
     }
     
+    func stop()
+    {
+        self.session.stopRunning()
+    }
+    
 }
-
 
 extension Camera : AVCaptureVideoDataOutputSampleBufferDelegate
 {

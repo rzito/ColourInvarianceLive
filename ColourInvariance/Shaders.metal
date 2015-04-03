@@ -3,10 +3,12 @@
 //  ColourInvariance
 //
 //  Created by Richard Zito on 02/04/2015.
-//  Copyright (c) 2015 Touchpress. All rights reserved.
+//  Copyright (c) 2015 Richard Zito. All rights reserved.
 //
 
 #include <metal_stdlib>
+
+// Colour invariance transform based on this paper: http://www.robots.ox.ac.uk/~mobile/Papers/2014ICRA_maddern.pdf
 
 using namespace metal;
 
