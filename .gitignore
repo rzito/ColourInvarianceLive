@@ -24,3 +24,13 @@ DerivedData
 # http://guides.cocoapods.org/using/using-cocoapods.html#should-i-ignore-the-pods-directory-in-source-control
 #
 # Pods/
+<<<<<<< HEAD
+=======
+
+# Carthage
+#
+# Add this line if you want to avoid checking in source code from Carthage dependencies.
+# Carthage/Checkouts
+
+Carthage/Build
+>>>>>>> 9d982a906987e617a9a23bab0cc1437138bc0928
