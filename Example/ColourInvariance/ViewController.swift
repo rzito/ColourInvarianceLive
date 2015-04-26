@@ -97,7 +97,8 @@ class ViewController: UIViewController
             // image mode
             
             self.camera.stop()
-            if let image = UIImage(named: "brick-wall.jpg")
+            
+            if let image = UIImage(named: "wall.jpg") // CC License. https://www.flickr.com/photos/sfantti/239849911/
             {
                 self.metalController.setTextureSource(MetalController.Texture.Image(image), completion: nil)
             }
