@@ -15,3 +15,5 @@ Live video preview (full colour mode):
 Live video preview (colour invariant mode):
 
 ![Colour invariant mode](Readme/invariant.jpg)
+
+Notice how most of the shadows are not identifiable in the colour invariant image.
