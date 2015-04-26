@@ -5,3 +5,13 @@ The paper [*Illumination Invariant Imaging: Applications in Robust Vision-based 
 This iOS project provides an implementation of the colour invariance transformation as a Metal shader. 
 
 The project also contains an example application where the transformation is applied to an image, and, more excitingly, to the live camera video preview.
+
+#Examples
+
+Live video preview (full colour mode):
+
+![Full colour mode](Readme/fullcolour.jpg)
+
+Live video preview (colour invariant mode):
+
+![Colour invariant mode](Readme/invariant.jpg)
